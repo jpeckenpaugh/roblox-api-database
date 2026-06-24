@@ -54,6 +54,28 @@ class TestRobloxApiValidator(unittest.TestCase):
                             "ValueType": {"Category": "Enum", "Name": "PartType"}
                         }
                     ]
+                },
+                {
+                    "Name": "SurfaceGuiBase",
+                    "Superclass": "Instance",
+                    "Members": [
+                        {
+                            "MemberType": "Property",
+                            "Name": "Face",
+                            "ValueType": {"Category": "Enum", "Name": "NormalId"}
+                        }
+                    ]
+                },
+                {
+                    "Name": "SurfaceGui",
+                    "Superclass": "SurfaceGuiBase",
+                    "Members": [
+                        {
+                            "MemberType": "Property",
+                            "Name": "LightInfluence",
+                            "ValueType": {"Category": "Primitive", "Name": "float"}
+                        }
+                    ]
                 }
             ],
             "Enums": [
@@ -69,6 +91,13 @@ class TestRobloxApiValidator(unittest.TestCase):
                     "Items": [
                         {"Name": "Ball", "Value": 0},
                         {"Name": "Block", "Value": 1}
+                    ]
+                },
+                {
+                    "Name": "NormalId",
+                    "Items": [
+                        {"Name": "Front", "Value": 0},
+                        {"Name": "Back", "Value": 1}
                     ]
                 }
             ]
@@ -130,29 +159,20 @@ class TestRobloxApiValidator(unittest.TestCase):
         self.assertIn("Roblox size dimensions must be", msg)
 
     def test_scan_directory_violations(self):
-        # Create temp directory and files to mock code scanning
-        temp_dir = tempfile.mkdtemp()
-        try:
-            # File with valid code
-            with open(os.path.join(temp_dir, "valid.lua"), "w") as f:
-                f.write('local part = Instance.new("Part")\npart.Material = Enum.Material.Slate')
-            
-            # File with invalid class instantiation
-            with open(os.path.join(temp_dir, "invalid_class.lua"), "w") as f:
-                f.write('local obj = Instance.new("InvalidClassPlaceholder")')
-                
-            # File with invalid enum value
-            with open(os.path.join(temp_dir, "invalid_enum.lua"), "w") as f:
-                f.write('part.Material = Enum.Material.Obsidian')
+        # Resolve physical test directories relative to script
+        test_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        valid_dir = os.path.join(test_dir, "tests", "valid_code_samples")
+        invalid_dir = os.path.join(test_dir, "tests", "invalid_code_samples")
 
-            # Run scanner
-            success, msg = validate_api.scan_lua_directory(self.classes, self.enums, temp_dir)
-            
-            # Scanner should report violations found
-            self.assertFalse(success)
-            self.assertIn("Violations found: 2", msg)
-        finally:
-            shutil.rmtree(temp_dir)
+        # 1. Scanning valid samples should report 0 violations
+        success, msg = validate_api.scan_lua_directory(self.classes, self.enums, valid_dir)
+        self.assertTrue(success)
+        self.assertIn("Violations found: 0", msg)
+
+        # 2. Scanning invalid samples should report 3 violations (1 class error, 2 enum errors)
+        success, msg = validate_api.scan_lua_directory(self.classes, self.enums, invalid_dir)
+        self.assertFalse(success)
+        self.assertIn("Violations found: 3", msg)
 
 if __name__ == "__main__":
     unittest.main()
