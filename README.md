@@ -5,7 +5,7 @@ A git-tracked database of official Roblox Client and Studio API dumps. Designed 
 ---
 
 > [!IMPORTANT]
-> **AI Agent Directive:** Do NOT attempt to read `current/roblox_api_dump.json` directly. The file is over 4MB and contains hundreds of thousands of lines of schema, which will instantly overload your token context window. Always use `./query_api.py` to query only the specific class or enum you need.
+> **AI Agent Directive:** Do NOT attempt to read `current/roblox_api_dump.json` directly. The file is over 4MB and contains hundreds of thousands of lines of schema, which will instantly overload your token context window. Always use `./tools/query_api.py` to query only the specific class or enum you need.
 
 ---
 
@@ -19,10 +19,9 @@ roblox-api-database/
 ├── current/
 │   └── roblox_api_dump.json      # Relative symlink pointing to the latest version JSON
 ├── tools/
-│   ├── fetch_api_dump.py         # Script to download, normalize, and semantically compare dumps
-│   └── query_api_base.py         # Base python class/enum search implementation
-├── fetch_api_dump.sh             # Root shell wrapper to run updates
-├── query_api.py                  # Root executable python wrapper for CLI query lookup
+│   ├── fetch_api_dump.sh         # Executable CLI to fetch/update dump
+│   ├── fetch_api_dump.py         # Python fetch and normalization logic
+│   └── query_api.py              # Executable CLI query lookup script
 ├── README.md                     # This file
 └── .gitignore
 ```
@@ -45,7 +44,7 @@ git submodule add git@github.com:jpeckenpaugh/roblox-api-database.git docs/api-d
 ### A. Updating the Database (CI/CD / Manual)
 To fetch the latest API dump from the official Roblox CDN endpoints:
 ```bash
-./fetch_api_dump.sh
+./tools/fetch_api_dump.sh
 ```
 
 **Semantic Comparison Logic:**
@@ -56,12 +55,12 @@ To prevent repository bloat, the download script normalizes the downloaded JSON 
 ### B. Querying Classes (Properties, Methods, Events)
 To inspect the member properties, functions, and events of any Roblox class (including members inherited from parent classes):
 ```bash
-./query_api.py class <ClassName>
+./tools/query_api.py class <ClassName>
 ```
 
 **Example:** Check all available properties, types, and inherited events of the `SurfaceGui` class:
 ```bash
-./query_api.py class SurfaceGui
+./tools/query_api.py class SurfaceGui
 ```
 
 **Output Snippet:**
@@ -80,12 +79,12 @@ Inheritance: SurfaceGui -> SurfaceGuiBase -> LayerCollector -> GuiBase2d -> GuiB
 ### C. Querying Enums
 To list all available key-value pairs belonging to a Roblox Enum group:
 ```bash
-./query_api.py enum <EnumName>
+./tools/query_api.py enum <EnumName>
 ```
 
 **Example:** Check all valid keys and values for the `Material` Enum:
 ```bash
-./query_api.py enum Material
+./tools/query_api.py enum Material
 ```
 
 **Output Snippet:**
