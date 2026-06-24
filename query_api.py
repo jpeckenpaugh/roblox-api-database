@@ -5,7 +5,7 @@ import os
 
 # Default database location relative to the script directory
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-DEFAULT_DB_PATH = os.path.join(SCRIPT_DIR, "roblox_api_dump.json")
+DEFAULT_DB_PATH = os.path.join(SCRIPT_DIR, "current", "roblox_api_dump.json")
 
 def load_db(path):
     if not os.path.exists(path):
