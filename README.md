@@ -6,6 +6,7 @@ A git-tracked database of official Roblox Client and Studio API dumps. Designed 
 
 * `roblox_api_dump.json`: The complete official Roblox API JSON schema dump.
 * `fetch_api_dump.sh`: Bash script to query Roblox CDN endpoints and download the latest dump.
+* `query_api.py`: Python CLI query tool to check classes and enums.
 * `.gitignore`: System and temporary files ignored.
 
 ## Usage
@@ -16,10 +17,15 @@ To download and overwrite the current dump with the latest API schema from the R
 ./fetch_api_dump.sh
 ```
 
-### 2. Programmatic Queries
-Use standard JSON parsing tools like `jq` to search classes or enums without loading the entire 4MB file into memory.
+### 2. Querying the Database
+Use the bundled Python tool to check class structures, inheritance, and enum values:
 
-**Example: Check if a material name is a valid Enum value:**
+**Example: Check all values for a specific Enum:**
 ```bash
-jq '.Enums[] | select(.Name=="Material") | .Items[].Name' roblox_api_dump.json | grep -i "Slate"
+./query_api.py enum Material
+```
+
+**Example: Check all properties, methods, and inherited members for a Class:**
+```bash
+./query_api.py class SurfaceGui
 ```
