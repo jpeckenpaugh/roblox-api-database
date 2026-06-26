@@ -11,7 +11,7 @@ This document is the authoritative instruction file for all AI coding agents wor
 
 ---
 
-## 1. Schema Query Workflow (Phases 0 & 1)
+## 1. Schema Query Workflow
 
 Before defining interface contracts or writing structural parameters:
 
@@ -31,7 +31,7 @@ Query enum groups to get valid key names and values.
 
 ---
 
-## 2. Validation Workflow (Phase 2 & 3 Pre-Flight)
+## 2. Validation Workflow (Pre-Flight)
 
 Before staging code changes, run verification tasks to ensure your proposed parameters and script structures match Roblox specifications:
 
